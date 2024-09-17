@@ -1,0 +1,11 @@
+- name: Install/restart/update Xen-Orchestra
+  hosts: all
+  vars:
+    supported_command:
+      - install
+      - restart
+      - update
+  tasks:
+    - name: Execute yaml
+      ansible.builtin.include_tasks: "task/{{ command }}.yaml"
+      when: command is defined and command in supported_command

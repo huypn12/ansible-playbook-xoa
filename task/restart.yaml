@@ -1,0 +1,10 @@
+- name: XOA restart
+  hosts: all
+  become: true
+  become_method: ansible.builtin.sudo
+  tasks:
+    - name: Start XOA service
+      ansible.builtin.systemd_service:
+        name: container-xoa
+        state: restarted
+        daemon_reload: true

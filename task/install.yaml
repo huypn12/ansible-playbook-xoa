@@ -1,0 +1,67 @@
+- name: XOA installation
+  hosts: all
+  become: true
+  become_method: ansible.builtin.sudo
+  tasks:
+    - name: Install podman
+      ansible.builtin.apt:
+        name: podman
+        state: present
+        update_cache: true
+
+    - name: Pull podman xoa image
+      containers.podman.podman_image:
+        name: docker.io/ronivay/xen-orchestra
+
+    - name: Create XOA volume xo-server
+      ansible.builtin.file:
+        path: /opt/xoa/containers/xo-server
+        state: directory
+        mode: "0755"
+
+    - name: Create XOA volume redis
+      ansible.builtin.file:
+        path: /opt/xoa/containers/redis
+        state: directory
+        mode: "0755"
+
+    - name: Create XOA container and systemd service file
+      containers.podman.podman_container:
+        name: xoa
+        image: xen-orchestra
+        state: present
+        recreate: true
+        expose:
+          - 80
+        volumes:
+          - "/opt/xoa/containers/xo-server:/var/lib/xo-server"
+          - "/opt/xoa/containers/redis:/var/lib/redis"
+        generate_systemd:
+          path: /etc/systemd/system/
+          restart_policy: always
+          stop_timeout: 120
+          names: true
+
+    - name: Start XOA service
+      ansible.builtin.systemd_service:
+        name: container-xoa
+        state: started
+        daemon_reload: true
+
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Copy nginx configuration
+      ansible.builtin.copy:
+        src: files/xoa.conf
+        dest: /etc/nginx/conf.d/xoa.conf
+        mode: "0755"
+
+    - name: Start nginx service
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: started
+        daemon_reload: true
