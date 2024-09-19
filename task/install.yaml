@@ -1,4 +1,6 @@
-- name: Disable apparmor # otherwise there is a known issue that prevents a container from being stopped with SIGTERM/SIGKILL
+- name: Disable apparmor
+  # otherwise there is a known issue that prevents a container from being stopped with SIGTERM/SIGKILL
+  # https://www.reddit.com/r/Ubuntu/comments/1d6b4aa/ubuntu_2404_lts_server_podman_cant_stop_or_remove/
   ansible.builtin.systemd_service:
     name: apparmor
     state: stopped
