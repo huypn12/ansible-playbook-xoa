@@ -1,11 +1,6 @@
-- name: Update and restart XOA container
-  hosts: all
-  become: true
-  become_method: ansible.builtin.sudo
-  tasks:
-    - name: Pull podman xoa image
-      containers.podman.podman_image:
-        name: docker.io/ronivay/xen-orchestra
+- name: Update podman xoa image
+  containers.podman.podman_image:
+    name: docker.io/ronivay/xen-orchestra
 
-    - name: Execute yaml
-      ansible.builtin.include_tasks: "task/restart.yaml"
+- name: Execute yaml
+  ansible.builtin.include_tasks: "task/restart.yaml"
