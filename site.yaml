@@ -1,5 +1,7 @@
 - name: Install/restart/update Xen-Orchestra
   hosts: all
+  become: true
+  become_method: ansible.builtin.sudo
   vars:
     supported_command:
       - install
