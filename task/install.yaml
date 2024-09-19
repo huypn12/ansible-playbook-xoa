@@ -65,6 +65,11 @@
     dest: /etc/nginx/conf.d/xen-orchestra.conf
     mode: "0755"
 
+- name: Stop nginx service
+  ansible.builtin.systemd_service:
+    name: nginx
+    state: stopped
+
 - name: Start nginx service
   ansible.builtin.systemd_service:
     name: nginx
